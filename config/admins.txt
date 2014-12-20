@@ -1,0 +1,24 @@
+######################################################################
+# Basically, ckey goes first. Rank goes after the "-"                #
+# Case is not important for ckey.                                    #
+# Case IS important for the rank. However punctuation/spaces are not #
+# Ranks can be anything defined in admin_ranks.txt           ~Carn   #
+######################################################################
+
+# Chief Admins
+Adjutor	 - Monarch
+narragorth       - Executive Director
+
+# Admins
+Vesthamer        - Admin Candidate
+sosiskoed        - Admin Candidate
+Hanter0718	 - Admin Candidate
+Zorghol          - Admin Candidate
+kjhkjhkjhkjh     - Admin Candidate
+Grekhem520       - Admin Candidate
+Elrondan         - Admin Candidate
+
+# Moderators
+
+# Others
+bradleyblya      - Event Master

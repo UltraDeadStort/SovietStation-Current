@@ -1,0 +1,16 @@
+bronepoezd: Tajas Neo: /obj/item/clothing/suit/neocoat
+krll: Randy Nickolson: /obj/item/device/taperecorder, /obj/item/clothing/suit/chickensuit, /obj/item/clothing/head/chicken
+mihan1998: John Devis: /obj/item/clothing/mask/cigarette/cigar/cohiba
+teras128: Kitab Al-Ayn: /obj/item/clothing/head/ushanka
+memorycard: /obj/item/clothing/suit/neocoat
+carrotman1512: Crot'ga'ji Moo'nberg: /obj/item/clothing/mask/cigarette/cigar/cohiba, /obj/item/weapon/lighter/zippo
+toetag: /obj/item/clothing/under/lawyer/oldman, /obj/item/weapon/storage/wallet
+fox30: Viktor Finn: /obj/item/clothing/under/suit_jacket/really_black, /obj/item/clothing/suit/wcoat, /obj/item/clothing/gloves/black
+player1208: Tony Pycroft: /obj/item/clothing/head/kitty, /obj/item/clothing/glasses/eyepatch
+nexus203: Niella Bertoni: /obj/item/clothing/under/rank/warspecial, /obj/item/clothing/head/warhat
+sbotkin: Alex Sbotkin: /obj/item/weapon/lighter/zippo/fluff/sbotkin
+maxvess: Grow Strox: /obj/item/weapon/crowbar/red
+dunt33: Leonardo Hesker: /obj/item/weapon/lighter/zippo
+nerostar: Jeth Rotex: /obj/item/clothing/mask/gas/voice/space_ninja
+miner2223: Solomon Kanaga /obj/item/weapon/lighter/zippo/fluff/sbotkin
+arhod: Jason Arhod /obj/item/clothing/under/rank/centcom/captain, /obj/item/clothing/head/beret/centcom/captain
