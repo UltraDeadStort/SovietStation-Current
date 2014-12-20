@@ -214,6 +214,27 @@
 	//If you wanted to add a species-level ability:
 	/*abilities = list(/client/proc/test_ability)*/
 
+/datum/species/clown
+	name = "Clown"
+	name_plural = "Clowns"
+	language = "Honk"
+	primitive = /mob/living/carbon/monkey
+	unarmed_type = /datum/unarmed_attack/punch
+	icobase = 'icons/mob/human_races/r_clown.dmi'
+	deform = 'icons/mob/human_races/r_def_clown.dmi'
+
+	flags = IS_WHITELISTED | HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
+
+/datum/species/mime
+	name = "Mime"
+	name_plural = "Mimes"
+	primitive = /mob/living/carbon/monkey
+	unarmed_type = /datum/unarmed_attack/punch
+	icobase = 'icons/mob/human_races/r_mime.dmi'
+	deform = 'icons/mob/human_races/r_def_mime.dmi'
+
+	flags = IS_WHITELISTED | HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
+
 /datum/species/unathi
 	name = "Unathi"
 	name_plural = "Unathi"

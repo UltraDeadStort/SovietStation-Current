@@ -115,6 +115,14 @@
 	key = "1"
 	flags = RESTRICTED
 
+/datum/language/clown
+	name = "Honk"
+	desc = "Honking."
+	speech_verb = "honks"
+	colour = "rough"
+	key = "w"
+	flags = RESTRICTED
+
 // Galactic common languages (systemwide accepted standards).
 /datum/language/trader
 	name = "Tradeband"

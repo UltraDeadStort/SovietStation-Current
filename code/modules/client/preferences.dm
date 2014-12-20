@@ -1092,7 +1092,7 @@ datum/preferences
 						age = max(min( round(text2num(new_age)), AGE_MAX),AGE_MIN)
 				if("species")
 
-					var/list/new_species = list("Human")
+					var/list/new_species = list("Human", "Clown", "Mime")
 					var/prev_species = species
 					var/whitelisted = 0
 
@@ -1577,8 +1577,8 @@ datum/preferences
 
 	for(var/name in organ_data)
 
-		var/status = organ_data[name]		
-		var/datum/organ/external/O = character.organs_by_name[name]		
+		var/status = organ_data[name]
+		var/datum/organ/external/O = character.organs_by_name[name]
 		if(O)
 			if(status == "amputated")
 				O.amputated = 1
@@ -1586,7 +1586,7 @@ datum/preferences
 				O.destspawn = 1
 			else if(status == "cyborg")
 				O.status |= ORGAN_ROBOT
-		else			
+		else
 			var/datum/organ/internal/I = character.internal_organs_by_name[name]
 			if(I)
 				if(status == "assisted")
