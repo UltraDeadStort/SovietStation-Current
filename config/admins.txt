@@ -6,7 +6,7 @@
 ######################################################################
 
 # Chief Admins
-Adjutor	 - Monarch
+FighterX2500	 - Monarch
 narragorth       - Executive Director
 
 # Admins
@@ -17,8 +17,11 @@ Zorghol          - Admin Candidate
 kjhkjhkjhkjh     - Admin Candidate
 Grekhem520       - Admin Candidate
 Elrondan         - Admin Candidate
+iliawhite	- Admin Candidate
 
 # Moderators
 
+
 # Others
+Adjutor	- HeadDev
 bradleyblya      - Event Master
