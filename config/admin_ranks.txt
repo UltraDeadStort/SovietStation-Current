@@ -47,6 +47,7 @@ Executive Director    +ALL
 #Exclusive
 Event Master   +ADMIN +BAN +VAREDIT +REJUV +FUN +BUILD +SPAWN +POSSESS +SOUND +SERVER +DEBUG
 SovietGeneral  +@
+HeadDev +ALL
 
 
 #Other

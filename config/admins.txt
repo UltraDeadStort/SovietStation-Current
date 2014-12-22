@@ -17,10 +17,18 @@ Zorghol          - Admin Candidate
 kjhkjhkjhkjh     - Admin Candidate
 Grekhem520       - Admin Candidate
 Elrondan         - Admin Candidate
-iliawhite	- Admin Candidate
+iliawhite	 - Admin Candidate
+
 
 # Moderators
 
+ITBlackwood      - Mentor
+Kirillwars       - Mentor
+XatapoN          - Mentor
+Bronepoezd       - Mentor
+Arhod            - Mentor
+Ceiling8cat      - Mentor
+FredFazBear      - Mentor
 
 # Others
 Adjutor	- HeadDev
