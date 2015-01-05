@@ -61,6 +61,7 @@
 	var/list/sci = new()
 	var/list/civ = new()
 	var/list/bot = new()
+	var/list/cent = new()
 	var/list/misc = new()
 	var/list/isactive = new()
 	var/dat = {"
@@ -114,6 +115,9 @@
 		if(real_rank in nonhuman_positions)
 			bot[name] = rank
 			department = 1
+		if(real_rank in centcom_positions)
+			cent[name] = rank
+			department = 1
 		if(!department && !(name in heads))
 			misc[name] = rank
 	if(heads.len > 0)
@@ -155,6 +159,11 @@
 	// misc guys
 	if(misc.len > 0)
 		dat += "<tr><th colspan=3>Miscellaneous</th></tr>"
+		for(name in misc)
+			dat += "<tr[even ? " class='alt'" : ""]><td>[name]</td><td>[misc[name]]</td><td>[isactive[name]]</td></tr>"
+			even = !even
+	if(cent.len > 0)
+		dat += "<tr><th colspan=3>Centcom</th></tr>"
 		for(name in misc)
 			dat += "<tr[even ? " class='alt'" : ""]><td>[name]</td><td>[misc[name]]</td><td>[isactive[name]]</td></tr>"
 			even = !even

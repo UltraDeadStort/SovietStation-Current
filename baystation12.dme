@@ -6,6 +6,9 @@
 // BEGIN_FILE_DIR
 #define FILE_DIR .
 #define FILE_DIR "code"
+#define FILE_DIR "code/game"
+#define FILE_DIR "code/game/gamemodes"
+#define FILE_DIR "code/game/gamemodes/NewYear"
 #define FILE_DIR "code/WorkInProgress"
 #define FILE_DIR "code/WorkInProgress/Cael_Aislinn"
 #define FILE_DIR "code/WorkInProgress/Cael_Aislinn/Jungle"
@@ -347,6 +350,7 @@
 #include "code\game\jobs\whitelist.dm"
 #include "code\game\jobs\job\assistant.dm"
 #include "code\game\jobs\job\captain.dm"
+#include "code\game\jobs\job\centcom.dm"
 #include "code\game\jobs\job\civilian.dm"
 #include "code\game\jobs\job\civilian_chaplain.dm"
 #include "code\game\jobs\job\engineering.dm"
@@ -427,6 +431,7 @@
 #include "code\game\machinery\computer\ai_core.dm"
 #include "code\game\machinery\computer\aifixer.dm"
 #include "code\game\machinery\computer\arcade.dm"
+#include "code\game\machinery\computer\arrivalshuttle.dm"
 #include "code\game\machinery\computer\atmos_alert.dm"
 #include "code\game\machinery\computer\buildandrepair.dm"
 #include "code\game\machinery\computer\camera.dm"

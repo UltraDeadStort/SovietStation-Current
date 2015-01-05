@@ -13,6 +13,10 @@ var/const/AI				=(1<<8)
 var/const/CYBORG			=(1<<9)
 
 
+var/const/CENTCOMAGENT		=(1<<10)
+var/const/SUPPLIESMANAGER	=(1<<11)
+
+
 var/const/MEDSCI			=(1<<1)
 
 var/const/RD				=(1<<0)
@@ -114,6 +118,11 @@ var/list/nonhuman_positions = list(
 	"AI",
 	"Cyborg",
 	"pAI"
+)
+
+var/list/centcom_positions = list(
+	"Centcom Agent",
+	"Supplies Manager"
 )
 
 

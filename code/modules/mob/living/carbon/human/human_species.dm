@@ -6,6 +6,14 @@
 	real_name = "Test Dummy"
 	status_flags = GODMODE|CANPUSH
 
+/mob/living/carbon/human/clown/New(var/new_loc)
+	h_style = "Bald"
+	..(new_loc, "Clown")
+
+/mob/living/carbon/human/clown/New(var/new_loc)
+	h_style = "Mime"
+	..(new_loc, "Mime")
+
 /mob/living/carbon/human/skrell/New(var/new_loc)
 	h_style = "Skrell Male Tentacles"
 	..(new_loc, "Skrell")

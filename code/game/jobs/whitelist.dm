@@ -1,6 +1,10 @@
-#define WHITELISTFILE "data/whitelist.txt"
+#define WHITELISTFILE "config/jobwhitelist.txt"
 
 var/list/whitelist = list()
+var/list/jobwhitelist = list(
+	"Centcom Agent",
+	"Supplies Manager"
+	)
 
 /hook/startup/proc/loadWhitelist()
 	if(config.usewhitelist)
@@ -8,13 +12,34 @@ var/list/whitelist = list()
 	return 1
 
 /proc/load_whitelist()
-	whitelist = file2list(WHITELISTFILE)
-	if(!whitelist.len)	whitelist = null
+	var/text = file2text("config/jobwhitelist.txt")
+	if (!text)
+		log_misc("Failed to load config/jobwhitelist.txt")
+	else
+		whitelist = text2list(text, "\n")
 
 /proc/check_whitelist(mob/M /*, var/rank*/)
 	if(!whitelist)
 		return 0
 	return ("[M.ckey]" in whitelist)
+
+/proc/is_whitelisted(mob/M, var/rank)
+	if(!config.usewhitelist)
+		return 1
+	if(check_rights(R_ADMIN, 0))
+		return 1
+	if(!whitelist)
+		return 1
+	if(!(rank in jobwhitelist))
+		return 1
+	if(M && rank)
+		for (var/s in whitelist)
+			if(findtext(s,"[M.ckey] - [rank]"))
+				return 1
+			if(findtext(s,"[M.ckey] - All"))
+				return 1
+	return 0
+
 
 /var/list/alien_whitelist = list()
 

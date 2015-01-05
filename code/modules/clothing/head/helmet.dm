@@ -105,7 +105,7 @@
 	desc = "An in-atmosphere helmet worn by members of the NanoTrasen Emergency Response Team. Protects the head from impacts."
 	icon_state = "erthelmet_cmd"
 	item_state = "syndicate-helm-green"
-	armor = list(melee = 62, bullet = 50, laser = 50,energy = 35, bomb = 10, bio = 2, rad = 0)
+	armor = list(melee = 62, bullet = 50, laser = 50,energy = 35, bomb = 10, bio = 100, rad = 100)
 
 //Commander
 /obj/item/clothing/head/helmet/ert/command
