@@ -78,6 +78,17 @@
 					T.source_terminal = src.name
 					T.date = current_date_string
 					T.time = worldtime2text()
+					var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
+					t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
+					t += "<table border='0' height='25' width='300'><tr>"
+					for (var/i = 1, i<=(songs.len), i++)
+						var/check = i%2
+						t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+						if(!check)
+							t += "</tr><tr>"
+					t += "</tr></table></div></body>"
+					usr << browse(t, "window=turntable;size=500x636;can_resize=0")
+					onclose(usr, "turntable")
 					enableMusic(currently_selected)
 					currently_selected = 0
 				else
@@ -86,17 +97,6 @@
 				usr << "\icon[src]<span class='warning'>Error: Unable to access your account. Please contact technical support if problem persists.</span>"
 		else
 			usr << "\icon[src]<span class='warning'>Connected account has been suspended.</span>"
-		var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
-		t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
-		t += "<table border='0' height='25' width='300'><tr>"
-		for (var/i = 1, i<=(songs.len), i++)
-			var/check = i%2
-			t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
-			if(!check)
-				t += "</tr><tr>"
-		t += "</tr></table></div></body>"
-		usr << browse(t, "window=turntable;size=500x636;can_resize=0")
-		onclose(usr, "turntable")
 	return
 
 /obj/machinery/party/turntable/attack_hand(mob/living/user as mob)
