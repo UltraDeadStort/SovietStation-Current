@@ -191,6 +191,7 @@
 				L.turnoff()
 
 /obj/machinery/party/turntable/process()
+	..()
 	if(stat & (POWEROFF|NOPOWER))
 		off()
 
