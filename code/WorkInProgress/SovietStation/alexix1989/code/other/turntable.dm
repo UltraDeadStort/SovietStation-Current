@@ -15,6 +15,7 @@
 	anchored = 1
 	density = 1
 	var/currently_selected = 0
+	var/currently_playing = 0
 	emagged = 0
 	var/list/songs = list ("Barstotzka"='sound/turntable/ArstotzkaAnthemFromEastGrestintoOrvechVonor.ogg',
 		"Trying to Stay Alive"='sound/turntable/BeeGeesStayinAlive.ogg',
@@ -83,7 +84,8 @@
 					t += "<table border='0' height='25' width='300'><tr>"
 					for (var/i = 1, i<=(songs.len), i++)
 						var/check = i%2
-						t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+						if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
+						else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
 						if(!check)
 							t += "</tr><tr>"
 					t += "</tr></table></div></body>"
@@ -111,7 +113,8 @@
 
 	for (var/i = 1, i<=(songs.len), i++)
 		var/check = i%2
-		t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+		if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
+		else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
 		if(!check)
 			t += "</tr><tr>"
 	t += "</tr></table></div></body>"
@@ -123,6 +126,7 @@
 	if(src.playing == 1)
 		off()
 	if(src.playing == 0 && index)
+		currently_playing = index
 		icon_state = "On"
 		//world << "Should be working..."
 		var/sound/S
@@ -137,7 +141,7 @@
 			for(var/obj/machinery/party/lasermachine/L in RA)
 				L.turnon()
 		playing = 1
-		while(playing == 1)
+		while(index == currently_playing)
 			for(var/mob/M in world)
 				var/area/location = get_area(M)
 				if((location in A.related) && M.music == 0)
@@ -177,7 +181,8 @@
 
 		for (var/i = 1, i<=(songs.len), i++)
 			var/check = i%2
-			t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+			if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
+			else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
 			if(!check) t += "</tr><tr>"
 		t += "</tr></table></div></body>"
 		usr << browse(t, "window=turntable;size=500x636;can_resize=0")
