@@ -17,6 +17,8 @@
 	var/currently_selected = 0
 	var/currently_playing = 0
 	emagged = 0
+	var/locked = 0
+	var/action = ""
 	var/list/songs = list ("Barstotzka"='sound/turntable/ArstotzkaAnthemFromEastGrestintoOrvechVonor.ogg',
 		"Trying to Stay Alive"='sound/turntable/BeeGeesStayinAlive.ogg',
 		"Song About Station Engineer"='sound/turntable/Engineer.ogg',
@@ -44,90 +46,108 @@
 	return src.attack_hand(user)
 
 /obj/machinery/party/turntable/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	usr.set_machine(src)
 	if (istype(W, /obj/item/weapon/card/emag) && !emagged)
 		src.emagged = 1
 		user << "You short out the product lock on [src]"
+		flick("Emag_on", src)
+		sleep(6)
+		if(playing) icon_state = "Emag_hacked_on"
+		else icon_state = "Off"
 		for(var/i in hacked_songs) {
 			songs[i] = hacked_songs[i]
 		}
 		return
-	if(istype(W, /obj/item/weapon/card) && currently_selected)
+	if(istype(W, /obj/item/weapon/card) && action != "")
 		var/obj/item/weapon/card/C = W
-		visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
 		var/datum/money_account/CH = get_account(C.associated_account_number)
-		if (CH) // Only proceed if card contains proper account number.
-			if(!CH.suspended)
-				var/transaction_amount = 2
-				if(transaction_amount <= CH.money)
-					CH.money -= transaction_amount
-					vendor_account.money += transaction_amount
-					var/datum/transaction/T = new()
-					T.target_name = "(via [src.name])"
-					T.purpose = "Purchase of [copytext(songs[currently_selected],1,2)]"
-					if(transaction_amount > 0)
-						T.amount = "([transaction_amount])"
-					else
+		if(action == "on_mus")
+			visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
+			if (CH) // Only proceed if card contains proper account number.
+				if(!CH.suspended)
+					var/transaction_amount = 10
+					if(transaction_amount <= CH.money)
+						CH.money -= transaction_amount
+						vendor_account.money += transaction_amount
+						var/datum/transaction/T = new()
+						T.target_name = "(via [src.name])"
+						T.purpose = "Purchase of [copytext(songs[currently_selected],1,2)]"
+						if(transaction_amount > 0)
+							T.amount = "([transaction_amount])"
+						else
+							T.amount = "[transaction_amount]"
+						T.source_terminal = src.name
+						T.date = current_date_string
+						T.time = worldtime2text()
+						CH.transaction_log.Add(T)
+						T = new()
+						T.target_name = CH.owner_name
+						T.purpose = "Purchase of [copytext(songs[currently_selected],1,2)]"
 						T.amount = "[transaction_amount]"
-					T.source_terminal = src.name
-					T.date = current_date_string
-					T.time = worldtime2text()
-					CH.transaction_log.Add(T)
-					T = new()
-					T.target_name = CH.owner_name
-					T.purpose = "Purchase of [copytext(songs[currently_selected],1,2)]"
-					T.amount = "[transaction_amount]"
-					T.source_terminal = src.name
-					T.date = current_date_string
-					T.time = worldtime2text()
-					var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
-					t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
-					t += "<table border='0' height='25' width='300'><tr>"
-					for (var/i = 1, i<=(songs.len), i++)
-						var/check = i%2
-						if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
-						else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
-						if(!check)
-							t += "</tr><tr>"
-					t += "</tr></table></div></body>"
-					usr << browse(t, "window=turntable;size=500x636;can_resize=0")
-					onclose(usr, "turntable")
-					enableMusic(currently_selected)
-					currently_selected = 0
+						T.source_terminal = src.name
+						T.date = current_date_string
+						T.time = worldtime2text()
+						show_main_menu()
+						enableMusic(currently_selected)
+						currently_selected = 0
+					else
+						usr << "\icon[src]<span class='warning'>You don't have that much money!</span>"
 				else
-					usr << "\icon[src]<span class='warning'>You don't have that much money!</span>"
+					usr << "\icon[src]<span class='warning'>Error: Unable to access your account. Please contact technical support if problem persists.</span>"
 			else
-				usr << "\icon[src]<span class='warning'>Error: Unable to access your account. Please contact technical support if problem persists.</span>"
-		else
-			usr << "\icon[src]<span class='warning'>Connected account has been suspended.</span>"
-	return
+				usr << "\icon[src]<span class='warning'>Connected account has been suspended.</span>"
+		if(action == "unlock")
+			if(access_bar in C.GetAccess())
+				locked = 0
+				visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
+				show_main_menu()
+			else
+				usr << browse("<body><center><span class='warning'>You don't have access</span></center></body>", "window=turntable;size=500x636;can_resize=0")
+		if(action == "lock")
+			if(access_bar in C.GetAccess())
+				locked = 1
+				visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
+				show_lock()
+			else
+				usr << browse("<body><center><span class='warning'>You don't have access</span></center></body>", "window=turntable;size=500x636;can_resize=0")
+		action = ""
 
-/obj/machinery/party/turntable/attack_hand(mob/living/user as mob)
-	if (..())
+/obj/machinery/party/turntable/proc/show_lock()
+	usr << browse("<body><center><span class='warning'>Locked</span></center><br><br><center><A href='?src=\ref[src];unlock=1'>Unlock</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+
+/obj/machinery/party/turntable/proc/show_main_menu()
+	if(locked)
+		show_lock()
 		return
-	usr.set_machine(src)
-	src.add_fingerprint(usr)
-
 	var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
 	t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
 	t += "<table border='0' height='25' width='300'><tr>"
-
 	for (var/i = 1, i<=(songs.len), i++)
 		var/check = i%2
 		if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
 		else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
 		if(!check)
 			t += "</tr><tr>"
-	t += "</tr></table></div></body>"
-	user << browse(t, "window=turntable;size=500x636;can_resize=0")
-	onclose(user, "turntable")
+	t += "</tr></table></div><center><span size='4'>Price: 10$</span><br><br><br><A href='?src=\ref[src];lock=1'>Lock</A></center></body>"
+	usr << browse(t, "window=turntable;size=500x636;can_resize=0")
+	onclose(usr, "turntable")
+/obj/machinery/party/turntable/attack_hand(mob/living/user as mob)
+	if (..())
+		return
+	usr.set_machine(src)
+	src.add_fingerprint(usr)
+	show_main_menu()
 	currently_selected = 0
+	action = ""
 	return
 /obj/machinery/party/turntable/proc/enableMusic(index)
 	if(src.playing == 1)
-		off()
+		playing=0
+		sleep(20)
 	if(src.playing == 0 && index)
 		currently_playing = index
 		icon_state = "On"
+		if(emagged) icon_state = "Emag_hacked_on"
 		//world << "Should be working..."
 		var/sound/S
 		S = sound(songs[songs[text2num(index)]])
@@ -141,7 +161,7 @@
 			for(var/obj/machinery/party/lasermachine/L in RA)
 				L.turnon()
 		playing = 1
-		while(index == currently_playing)
+		while(index == currently_playing && playing==1)
 			for(var/mob/M in world)
 				var/area/location = get_area(M)
 				if((location in A.related) && M.music == 0)
@@ -154,6 +174,7 @@
 					M << Soff
 					M.music = 0
 			sleep(10)
+	off()
 /obj/machinery/party/turntable/proc/off()
 	icon_state = "Off"
 	if(src.playing == 1)
@@ -172,27 +193,21 @@
 	..()
 
 	if( href_list["back"])
-		currently_selected = 0
-		usr.set_machine(src)
-		src.add_fingerprint(usr)
-		var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
-		t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
-		t += "<table border='0' height='25' width='300'><tr>"
-
-		for (var/i = 1, i<=(songs.len), i++)
-			var/check = i%2
-			if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
-			else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
-			if(!check) t += "</tr><tr>"
-		t += "</tr></table></div></body>"
-		usr << browse(t, "window=turntable;size=500x636;can_resize=0")
-		onclose(usr, "turntable")
+		show_main_menu()
 		return
 	if( href_list["tryOn"])
 		currently_selected = href_list["tryOn"]
+		action = "on_mus"
 		usr << browse("<body><center>Swipe your card, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
 		return
-
+	if(href_list["lock"])
+		action = "lock"
+		usr << browse("<body><center>Swipe your card to lock, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+		return
+	if(href_list["unlock"])
+		action = "unlock"
+		usr << browse("<body><center>Swipe your card to unlock, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+		return
 	if( href_list["on"])
 		enableMusic(href_list["on"])
 		return
