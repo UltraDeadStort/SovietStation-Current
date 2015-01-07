@@ -139,7 +139,13 @@ datum/hud/New(mob/owner)
 
 
 /datum/hud/proc/hidden_inventory_update()
+
 	if(!mymob) return
+	if(istype(mymob, /mob/living/carbon/human/xhunter) || istype(mymob, /mob/living/carbon/human/xdrone) || istype(mymob, /mob/living/carbon/human/xsentinel) || istype(mymob, /mob/living/carbon/human/xqueen))
+		var/mob/living/carbon/human/H = mymob
+		if(H.head)	H.head.screen_loc = ui_id
+		if(H.wear_suit)	H.wear_suit.screen_loc = ui_belt
+		return
 	if(ishuman(mymob))
 		var/mob/living/carbon/human/H = mymob
 		if(inventory_shown && hud_shown)
@@ -165,9 +171,9 @@ datum/hud/New(mob/owner)
 
 
 /datum/hud/proc/persistant_inventory_update()
+
 	if(!mymob)
 		return
-
 	if(ishuman(mymob))
 		var/mob/living/carbon/human/H = mymob
 		if(hud_shown)
