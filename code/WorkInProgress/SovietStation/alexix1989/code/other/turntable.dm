@@ -142,8 +142,8 @@
 	return
 /obj/machinery/party/turntable/proc/enableMusic(index)
 	if(src.playing == 1)
-		playing=0
-		sleep(20)
+		off()
+		sleep(15)
 	if(src.playing == 0 && index)
 		currently_playing = index
 		icon_state = "On"
