@@ -189,6 +189,11 @@
 		for(var/area/RA in A.related)
 			for(var/obj/machinery/party/lasermachine/L in RA)
 				L.turnoff()
+
+/obj/machinery/party/turntable/process()
+	if(stat & (POWEROFF|NOPOWER))
+		off()
+
 /obj/machinery/party/turntable/Topic(href, href_list)
 	..()
 
