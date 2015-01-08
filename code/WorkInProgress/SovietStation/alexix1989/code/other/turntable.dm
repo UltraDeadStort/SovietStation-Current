@@ -17,8 +17,8 @@
 	var/currently_selected = 0
 	var/currently_playing = 0
 	emagged = 0
-	var/locked = 0
-	var/action = ""
+	var/locked = 1
+	var/action = null
 	var/list/songs = list ("Barstotzka"='sound/turntable/ArstotzkaAnthemFromEastGrestintoOrvechVonor.ogg',
 		"Trying to Stay Alive"='sound/turntable/BeeGeesStayinAlive.ogg',
 		"Song About Station Engineer"='sound/turntable/Engineer.ogg',
@@ -58,7 +58,7 @@
 			songs[i] = hacked_songs[i]
 		}
 		return
-	if(istype(W, /obj/item/weapon/card) && action != "")
+	if(istype(W, /obj/item/weapon/card) && action != null)
 		var/obj/item/weapon/card/C = W
 		var/datum/money_account/CH = get_account(C.associated_account_number)
 		if(action == "on_mus")
@@ -107,28 +107,27 @@
 			if(access_bar in C.GetAccess())
 				locked = 1
 				visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
-				show_lock()
+				show_main_menu()
 			else
 				usr << browse("<body><center><span class='warning'>You don't have access</span></center></body>", "window=turntable;size=500x636;can_resize=0")
 		action = ""
-
-/obj/machinery/party/turntable/proc/show_lock()
-	usr << browse("<body><center><span class='warning'>Locked</span></center><br><br><center><A href='?src=\ref[src];unlock=1'>Unlock</A></center></body>", "window=turntable;size=500x636;can_resize=0")
-
 /obj/machinery/party/turntable/proc/show_main_menu()
-	if(locked)
-		show_lock()
-		return
 	var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
 	t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
 	t += "<table border='0' height='25' width='300'><tr>"
 	for (var/i = 1, i<=(songs.len), i++)
 		var/check = i%2
-		if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
-		else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+		t += "<td>"
+		if (!locked) t += "<A href='?src=\ref[src];tryOn=[i]'>"
+		t += "<font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font>"
+		if (!locked) t += "</A>"
+		t += "</td>"
 		if(!check)
 			t += "</tr><tr>"
-	t += "</tr></table></div><center><span size='4'>Price: 10$</span><br><br><br><A href='?src=\ref[src];lock=1'>Lock</A></center></body>"
+	t += "</tr></table></div><center><span size='4'>Price: 10$</span><br><br><br>"
+	if(!locked) t += "<A href='?src=\ref[src];lock=1'>Lock</A>"
+	else t += "<A href='?src=\ref[src];unlock=1'>Unlock</A>"
+	t += "</center></body>"
 	usr << browse(t, "window=turntable;size=500x636;can_resize=0")
 	onclose(usr, "turntable")
 /obj/machinery/party/turntable/attack_hand(mob/living/user as mob)
@@ -138,7 +137,7 @@
 	src.add_fingerprint(usr)
 	show_main_menu()
 	currently_selected = 0
-	action = ""
+	action = null
 	return
 /obj/machinery/party/turntable/proc/enableMusic(index)
 	if(src.playing == 1)
@@ -203,10 +202,15 @@
 		return
 	if( href_list["tryOn"])
 		currently_selected = href_list["tryOn"]
+		if(currently_selected == currently_playing)
+			return
 		action = "on_mus"
 		usr << browse("<body><center>Swipe your card, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
 		return
 	if(href_list["lock"])
+		if(emagged)
+			usr << browse("<body><center><span class='warning'>This function broken</span><br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+			return
 		action = "lock"
 		usr << browse("<body><center>Swipe your card to lock, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
 		return
