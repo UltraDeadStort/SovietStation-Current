@@ -222,8 +222,53 @@
 	unarmed_type = /datum/unarmed_attack/punch
 	icobase = 'icons/mob/human_races/r_clown.dmi'
 	deform = 'icons/mob/human_races/r_def_clown.dmi'
+	var/fun = 0
+	var/fun_max = 100
+	flags = HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
+	inherent_verbs = list(
+						/mob/living/carbon/human/proc/CheckFun,
+						/mob/living/carbon/human/proc/EatBanana,
+						/mob/living/carbon/human/proc/FunSelf
+						)
+	/*
+	New()
+		usr.verbs += /datum/species/clown/verb/EatBanana
 
-	flags = IS_WHITELISTED | HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
+	verb/EatBanana()
+		set name = "banana"
+		if(usr.get_active_hand() == /obj/item/weapon/reagent_containers/food/snacks/grown/banana)
+			world << "banana"
+
+	*/
+/mob/living/carbon/human/proc/CheckFun()
+	set name = "Check Fun"
+	set category = "Clown"
+
+	if(src.species.name == "Clown")
+		src << "[src.species:fun]/[src.species:fun_max]"
+
+/mob/living/carbon/human/proc/EatBanana()
+	set name = "Eat Banana(+10 fun)"
+	set category = "Clown"
+
+	if(src.species.name == "Clown")
+		if(istype(src.get_active_hand(), /obj/item/weapon/reagent_containers/food/snacks/grown/banana))
+			var/obj/item/weapon/reagent_containers/food/snacks/grown/banana/B = src.get_active_hand()
+			drop_item(B)
+			del(B)
+			world << "banana"
+			src.species:fun += 10
+			if(src.species:fun > src.species:fun_max)
+				src.species:fun = src.species:fun_max
+
+/mob/living/carbon/human/proc/FunSelf()
+	set name = "Fun Self(-20 fun)"
+	set category = "Clown"
+	world << "heal"
+	if(src.species.name == "Clown")
+		if(src.species:fun >= 20)
+			src.species:fun -= 20
+			src.reagents.reagent_list.Add(new /datum/reagent/tricordrazine)
 
 /datum/species/mime
 	name = "Mime"
@@ -233,7 +278,7 @@
 	icobase = 'icons/mob/human_races/r_mime.dmi'
 	deform = 'icons/mob/human_races/r_def_mime.dmi'
 
-	flags = IS_WHITELISTED | HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
+	flags = HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR
 
 /datum/species/unathi
 	name = "Unathi"

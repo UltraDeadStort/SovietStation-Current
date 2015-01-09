@@ -59,7 +59,7 @@
 	var/hostedby = null
 	var/respawn = 1
 	var/guest_jobban = 1
-	var/usewhitelist = 0
+	var/usewhitelist = 1
 	var/mods_are_mentors = 0
 	var/kick_inactive = 0				//force disconnect for inactive players
 	var/load_jobs_from_txt = 0

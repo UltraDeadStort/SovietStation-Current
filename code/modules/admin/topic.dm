@@ -645,6 +645,26 @@
 
 		jobs += "</tr></table>"
 
+		//Centcom (Blue)
+		jobs += "<table cellpadding='1' cellspacing='0' width='100%'>"
+		jobs += "<tr align='center' bgcolor='ccccff'><th colspan='[length(centcom_positions)]'><a href='?src=\ref[src];jobban3=centcomdept;jobban4=\ref[M]'>Centcom Positions</a></th></tr><tr align='center'>"
+		for(var/jobPos in centcom_positions)
+			if(!jobPos)	continue
+			var/datum/job/job = job_master.GetJob(jobPos)
+			if(!job) continue
+
+			if(jobban_isbanned(M, job.title))
+				jobs += "<td width='20%'><a href='?src=\ref[src];jobban3=[job.title];jobban4=\ref[M]'><font color=red>[replacetext(job.title, " ", "&nbsp")]</font></a></td>"
+				counter++
+			else
+				jobs += "<td width='20%'><a href='?src=\ref[src];jobban3=[job.title];jobban4=\ref[M]'>[replacetext(job.title, " ", "&nbsp")]</a></td>"
+				counter++
+
+			if(counter >= 6) //So things dont get squiiiiished!
+				jobs += "</tr><tr>"
+				counter = 0
+		jobs += "</tr></table>"
+
 
 		body = "<body>[jobs]</body>"
 		dat = "<tt>[header][body]</tt>"
@@ -711,6 +731,12 @@
 			if("nonhumandept")
 				joblist += "pAI"
 				for(var/jobPos in nonhuman_positions)
+					if(!jobPos)	continue
+					var/datum/job/temp = job_master.GetJob(jobPos)
+					if(!temp) continue
+					joblist += temp.title
+			if("centcomdept")
+				for(var/jobPos in centcom_positions)
 					if(!jobPos)	continue
 					var/datum/job/temp = job_master.GetJob(jobPos)
 					if(!temp) continue

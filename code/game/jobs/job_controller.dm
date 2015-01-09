@@ -51,6 +51,7 @@ var/global/datum/controller/occupations/job_master
 			var/datum/job/job = GetJob(rank)
 			if(!job)	return 0
 			if(jobban_isbanned(player, rank))	return 0
+			if(!is_whitelisted(player, rank))	return 0
 			if(!job.player_old_enough(player.client)) return 0
 			var/position_limit = job.total_positions
 			if(!latejoin)
