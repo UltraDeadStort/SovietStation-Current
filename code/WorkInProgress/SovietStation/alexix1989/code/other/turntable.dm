@@ -17,21 +17,13 @@
 	var/currently_selected = 0
 	var/currently_playing = 0
 	emagged = 0
-	var/locked = 0
-	var/action = ""
-	var/list/songs = list ("Barstotzka"='sound/turntable/ArstotzkaAnthemFromEastGrestintoOrvechVonor.ogg',
-		"Trying to Stay Alive"='sound/turntable/BeeGeesStayinAlive.ogg',
-		"Song About Station Engineer"='sound/turntable/Engineer.ogg',
-		"Chok-Chok"='sound/turntable/klemens.ogg',
-		"Escape from Brig"='sound/turntable/LatchoDromLaVerdine.ogg',
-		"Love"='sound/turntable/LudwigVanBeethovenFurElise.ogg',
-		"Everybody Loves Moons"='sound/turntable/LudwigvanBeethovenTheMoonlightSonata.ogg',
-		"Reloading an AI"='sound/turntable/PPKReload.ogg',
-		"Soviet March"='sound/turntable/RedAlert3FullSovietMarch.ogg',
-		"Soviet March Solo"='sound/turntable/RedAlert3UprisingSolo.ogg',
-		"Sunshine"='sound/turntable/SpaceMagicFly.ogg',
-		"In my Mind..."='sound/turntable/ThePixiesWheresMyMind.ogg',
-		"Das Backerei und Serioja"='sound/turntable/TIKSeroja.ogg')
+	var/locked = 1
+	var/action = null
+	var/list/songs = list (
+	"Track #1"='sound/turntable/track1.ogg',
+	"Track #2"='sound/turntable/track2.ogg',
+	"Track #3"='sound/turntable/track3.ogg',
+	"Track #4"='sound/turntable/track4.ogg',)
 	var/list/hacked_songs = list (
 		"Space Asshole"='sound/turntable/SpaceAsshole.ogg'
 		)
@@ -49,6 +41,7 @@
 	usr.set_machine(src)
 	if (istype(W, /obj/item/weapon/card/emag) && !emagged)
 		src.emagged = 1
+		src.locked = 0
 		user << "You short out the product lock on [src]"
 		flick("Emag_on", src)
 		sleep(6)
@@ -58,7 +51,7 @@
 			songs[i] = hacked_songs[i]
 		}
 		return
-	if(istype(W, /obj/item/weapon/card) && action != "")
+	if(istype(W, /obj/item/weapon/card) && action != null)
 		var/obj/item/weapon/card/C = W
 		var/datum/money_account/CH = get_account(C.associated_account_number)
 		if(action == "on_mus")
@@ -87,9 +80,12 @@
 						T.source_terminal = src.name
 						T.date = current_date_string
 						T.time = worldtime2text()
-						show_main_menu()
-						enableMusic(currently_selected)
+						action = null
+						var/index = currently_selected
 						currently_selected = 0
+						currently_playing = index
+						show_main_menu()
+						enableMusic(index)
 					else
 						usr << "\icon[src]<span class='warning'>You don't have that much money!</span>"
 				else
@@ -100,35 +96,62 @@
 			if(access_bar in C.GetAccess())
 				locked = 0
 				visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
+				action = null
 				show_main_menu()
 			else
-				usr << browse("<body><center><span class='warning'>You don't have access</span></center></body>", "window=turntable;size=500x636;can_resize=0")
+				usr << "\icon[src]<span class='warning'>You have no access.</span>"
+				action = null
+				show_main_menu()
 		if(action == "lock")
 			if(access_bar in C.GetAccess())
 				locked = 1
 				visible_message("<span class='info'>[usr] swipes a card through [src].</span>")
-				show_lock()
+				action = null
+				show_main_menu()
 			else
-				usr << browse("<body><center><span class='warning'>You don't have access</span></center></body>", "window=turntable;size=500x636;can_resize=0")
-		action = ""
-
-/obj/machinery/party/turntable/proc/show_lock()
-	usr << browse("<body><center><span class='warning'>Locked</span></center><br><br><center><A href='?src=\ref[src];unlock=1'>Unlock</A></center></body>", "window=turntable;size=500x636;can_resize=0")
-
+				usr << "\icon[src]<span class='warning'>You have no access.</span>"
+				action = null
+				show_main_menu()
+		action = null
 /obj/machinery/party/turntable/proc/show_main_menu()
-	if(locked)
-		show_lock()
-		return
-	var/t = "<body background=turntable.png ><br><br><br><br><br><br><br><br><br><br><br><br><div align='center'>"
-	t += "<A href='?src=\ref[src];off=1'><font color='maroon'>T</font><font color='geen'>urn</font> <font color='red'>Off</font></A>"
-	t += "<table border='0' height='25' width='300'><tr>"
+	var/t = "<body background=turntable.png >"
+	if(action || currently_selected)
+		t+= "<br><center><font color='green'>Swipe your card to "
+		if(action == "lock")
+			t+= "lock"
+		if(action == "unlock")
+			t+= "unlock"
+		if(currently_selected)
+			t += "play music"
+		t+= ", please</font></center>"
+	else
+		t+= "<br><br>"
+	t += "<br><br><br><br><br><br>"
+	t += "<center><A href='?src=\ref[src];off=1'><font color='red'>Turn Off</font></A></center><br><br><br>"
+	t += "<table border='0' height='25' width='300' align='center'><tr>"
 	for (var/i = 1, i<=(songs.len), i++)
 		var/check = i%2
-		if(i == currently_playing) t += "<td><font color='green'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></td>"
-		else t += "<td><A href='?src=\ref[src];tryOn=[i]'><font color='maroon'>[copytext(songs[i],1,2)]</font><font color='purple'>[copytext(songs[i],2)]</font></A></td>"
+		t += "<td><center>"
+		if (!locked)
+			if("[i]" != src.currently_playing)
+				t += "<A href='?src=\ref[src];tryOn=[i]'>"
+		t += "[copytext(songs[i],1,2)][copytext(songs[i],2)]"
+		if (!locked)
+			if("[i]" != src.currently_playing)
+				t += "</A>"
+		t += "</td></center>"
 		if(!check)
 			t += "</tr><tr>"
-	t += "</tr></table></div><center><span size='4'>Price: 10$</span><br><br><br><A href='?src=\ref[src];lock=1'>Lock</A></center></body>"
+	t += "</tr></table><br><center><font size='4'>Price: 10$</font><br><br><br>"
+	if(action == "lock" || action == "unlock" || currently_selected)
+		t += "<A href='?src=\ref[src];cancel=1'>Cancel</A>"
+	else
+		switch(locked)
+			if(0)
+				t += "<A href='?src=\ref[src];lock=1'>Lock</A>"
+			if(1)
+				t += "<A href='?src=\ref[src];unlock=1'>Unlock</A>"
+	t += "</center></body>"
 	usr << browse(t, "window=turntable;size=500x636;can_resize=0")
 	onclose(usr, "turntable")
 /obj/machinery/party/turntable/attack_hand(mob/living/user as mob)
@@ -136,9 +159,9 @@
 		return
 	usr.set_machine(src)
 	src.add_fingerprint(usr)
-	show_main_menu()
 	currently_selected = 0
-	action = ""
+	action = null
+	show_main_menu()
 	return
 /obj/machinery/party/turntable/proc/enableMusic(index)
 	if(src.playing == 1)
@@ -189,6 +212,8 @@
 		for(var/area/RA in A.related)
 			for(var/obj/machinery/party/lasermachine/L in RA)
 				L.turnoff()
+	currently_playing = 0
+	currently_selected = 0
 
 /obj/machinery/party/turntable/process()
 	..()
@@ -203,16 +228,20 @@
 		return
 	if( href_list["tryOn"])
 		currently_selected = href_list["tryOn"]
+		if(currently_selected == currently_playing)
+			return
 		action = "on_mus"
-		usr << browse("<body><center>Swipe your card, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
-		return
+		show_main_menu()
 	if(href_list["lock"])
+		if(emagged)
+			show_main_menu()
+			return
 		action = "lock"
-		usr << browse("<body><center>Swipe your card to lock, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+		show_main_menu()
 		return
 	if(href_list["unlock"])
 		action = "unlock"
-		usr << browse("<body><center>Swipe your card to unlock, please<br><br><A href='?src=\ref[src];back=1'>Back</A></center></body>", "window=turntable;size=500x636;can_resize=0")
+		show_main_menu()
 		return
 	if( href_list["on"])
 		enableMusic(href_list["on"])
@@ -220,6 +249,11 @@
 
 	if( href_list["off"] )
 		off()
+		show_main_menu()
+	if(href_list["cancel"])
+		action = null
+		currently_selected = 0
+		show_main_menu()
 
 /obj/machinery/party/mixer
 	name = "mixer"

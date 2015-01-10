@@ -48,7 +48,6 @@ Des: Removes all infected images from the alien.
 				del(I)
 	return
 
-/* TODO: Convert this over.
 /mob/living/carbon/human/alien/show_inv(mob/user as mob)
 
 	user.set_machine(src)
@@ -65,7 +64,6 @@ Des: Removes all infected images from the alien.
 	user << browse(dat, text("window=mob[name];size=340x480"))
 	onclose(user, "mob[name]")
 	return
-	*/
 
 /* TODO: Convert this over.
 /mob/living/carbon/human/alien/queen/large
