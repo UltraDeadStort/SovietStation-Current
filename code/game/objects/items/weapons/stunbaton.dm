@@ -95,7 +95,41 @@
 			user << "<span class='warning'>[src] is out of charge.</span>"
 	add_fingerprint(user)
 
+/obj/item/weapon/melee/baton/throw_impact(atom/hit_atom)
+	..()
+	if(istype(hit_atom,/mob/living))
+		var/mob/living/L = hit_atom
+		var/target_zone = get_zone_with_miss_chance("chest", L)
+		if (ishuman(L))
+			if(!target_zone)
+				L.visible_message("\red <B>[src] misses [L]!")
+				return 0
+			var/mob/living/carbon/human/H = L
+			var/datum/organ/external/affecting = H.get_organ(target_zone)
+			if (affecting)
+				if(!status)
+					L.visible_message("<span class='warning'>[L] has been prodded in the [affecting.display_name] by [src]. Luckily it was off.</span>")
+					return 1
+				else
+					H.visible_message("<span class='danger'>[L] has been prodded in the [affecting.display_name] by [src]!</span>")
+		else
+			if(!status)
+				L.visible_message("<span class='warning'>[L] has been hit by [src]. Luckily it was off.</span>")
+				return 1
+			else
+				L.visible_message("<span class='danger'>[L] has been hit by [src]!</span>")
+		L.stun_effect_act(stunforce, agonyforce, target_zone, src)
 
+		playsound(loc, 'sound/weapons/Egloves.ogg', 50, 1, -1)
+		msg_admin_attack("[key_name(L)] has been stunned by the [src].")
+
+		deductcharge(hitcost)
+
+		if(ishuman(L))
+			var/mob/living/carbon/human/H = L
+			H.forcesay(hit_appends)
+
+	return 1
 /obj/item/weapon/melee/baton/attack(mob/M, mob/user)
 	if(status && (CLUMSY in user.mutations) && prob(50))
 		user << "span class='danger'>You accidentally hit yourself with the [src]!</span>"

@@ -346,9 +346,6 @@ emp_act
 
 		if(armor < 2)
 			apply_damage(throw_damage, dtype, zone, armor, is_sharp(O), has_edge(O), O)
-			if(istype(AM,/obj/item/weapon/melee/baton/))
-				var/obj/item/weapon/melee/baton/L = AM
-				if(L.status) src.stun_effect_act(0, 150, zone, L)
 
 		if(ismob(O.thrower))
 			var/mob/M = O.thrower
