@@ -105,7 +105,7 @@
 				charging = 1
 			else // Or not at all?
 				charging = 0
-
+	outputting = 0
 	if(online)		// if outputting
 		lastout = min( charge/SMESRATE, output)		//limit output to that stored
 		charge -= lastout*SMESRATE		// reduce the storage (may be recovered in /restore() if excessive)
