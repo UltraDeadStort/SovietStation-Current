@@ -1,5 +1,6 @@
 /obj/item/weapon/melee/energy
 	var/active = 0
+	can_embed = 0
 	flags = FPRINT | TABLEPASS | NOBLOODY
 
 	suicide_act(mob/user)

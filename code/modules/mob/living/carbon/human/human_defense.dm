@@ -273,7 +273,7 @@ emp_act
 			if("chest")//Easier to score a stun but lasts less time
 				if(prob((I.force + 10)))
 					apply_effect(6, WEAKEN, armor)
-					visible_message("\red <B>[src] has been knocked down!</B>")
+					visible_message("\red <B>[src] has been  knocked down!</B>")
 
 				if(bloody)
 					bloody_body(src)
@@ -282,7 +282,7 @@ emp_act
 		forcesay(hit_appends)	//forcesay checks stat already
 
 	//Melee weapon embedded object code.
-	if (I.damtype == BRUTE && !I.is_robot_module())
+	if (I.damtype == BRUTE && !I.is_robot_module() && I.can_embed)
 		var/damage = I.force
 		if (armor)
 			damage /= armor+1
@@ -356,23 +356,26 @@ emp_act
 				if(!istype(src,/mob/living/simple_animal/mouse))
 					msg_admin_attack("[src.name] ([src.ckey]) was hit by a [O], thrown by [M.name] ([assailant.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
 
+		//if(istype(AM,/obj/item/weapon/melee/baton/))
+
 		//thrown weapon embedded object code.
 		if(dtype == BRUTE && istype(O,/obj/item))
 			var/obj/item/I = O
-			if (!I.is_robot_module())
-				var/sharp = is_sharp(I)
-				var/damage = throw_damage
-				if (armor)
-					damage /= armor+1
+			if(I.can_embed)
+				if (!I.is_robot_module())
+					var/sharp = is_sharp(I)
+					var/damage = throw_damage
+					if (armor)
+						damage /= armor+1
 
-				//blunt objects should really not be embedding in things unless a huge amount of force is involved
-				var/embed_chance = sharp? damage/I.w_class : damage/(I.w_class*3)
-				var/embed_threshold = sharp? 5*I.w_class : 15*I.w_class
+					//blunt objects should really not be embedding in things unless a huge amount of force is involved
+					var/embed_chance = sharp? damage/I.w_class : damage/(I.w_class*3)
+					var/embed_threshold = sharp? 5*I.w_class : 15*I.w_class
 
-				//Sharp objects will always embed if they do enough damage.
-				//Thrown sharp objects have some momentum already and have a small chance to embed even if the damage is below the threshold
-				if((sharp && prob(damage/(10*I.w_class)*100)) || (damage > embed_threshold && prob(embed_chance)))
-					affecting.embed(I)
+					//Sharp objects will always embed if they do enough damage.
+					//Thrown sharp objects have some momentum already and have a small chance to embed even if the damage is below the threshold
+					if((sharp && prob(damage/(10*I.w_class)*100)) || (damage > embed_threshold && prob(embed_chance)))
+						affecting.embed(I)
 
 		// Begin BS12 momentum-transfer code.
 		if(O.throw_source && speed >= 15)
