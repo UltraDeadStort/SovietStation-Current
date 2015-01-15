@@ -27,6 +27,7 @@
 	//Holders for powerout event.
 	var/last_output = 0
 	var/last_charge = 0
+	var/outputting = 0
 	var/last_online = 0
 	var/open_hatch = 0
 	var/building_terminal = 0 //Suggestions about how to avoid clickspam building several terminals accepted!
@@ -108,9 +109,11 @@
 	if(online)		// if outputting
 		lastout = min( charge/SMESRATE, output)		//limit output to that stored
 		charge -= lastout*SMESRATE		// reduce the storage (may be recovered in /restore() if excessive)
-		add_avail(lastout)				// add output to powernet (smes side)
-		if(charge < 0.0001)
-			online = 0					// stop output if charge falls to zero
+		if(charge > output)
+			outputting = 2
+			add_avail(lastout)				// add output to powernet (smes side)
+		else
+			outputting = 1
 
 	// only update icon if state changed
 	if(last_disp != chargedisplay() || last_chrg != charging || last_onln != online)
@@ -271,6 +274,7 @@
 	data["outputLevel"] = output
 	data["outputMax"] = output_level_max
 	data["outputLoad"] = round(loaddemand)
+	data["outputting"] = outputting
 
 	// update the ui if it exists, returns null if no ui is passed/found
 	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
