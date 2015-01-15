@@ -309,6 +309,9 @@ Alien plants should do something if theres a lot of poison
 		if(istype(target, /turf/simulated/wall)) // I hate turf code.
 			var/turf/simulated/wall/W = target
 			W.dismantle_wall(1)
+		else if(istype(target, /turf/simulated/floor))
+			var/turf/simulated/floor/W = target
+			W.ChangeTurf(/turf/space)
 		else
 			del(target)
 		del(src)

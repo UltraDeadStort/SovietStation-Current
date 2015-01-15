@@ -155,8 +155,6 @@
 		if(istype(T, /turf/simulated/floor/engine))
 			src << "\green You cannot dissolve this object."
 			return
-		else// Not a type we can acid.
-			return
 
 	if(check_alien_ability(200,0,"acid gland"))
 		new /obj/effect/alien/acid(get_turf(O), O)
