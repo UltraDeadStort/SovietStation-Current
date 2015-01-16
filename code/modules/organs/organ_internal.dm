@@ -261,7 +261,18 @@
 			owner.eye_blurry = 20
 		if(is_broken())
 			owner.eye_blind = 20
-
+/datum/organ/internal/cooler
+	name = "cooler"
+	parent_organ = "chest"
+	removed_type = /obj/item/organ/appendix
+	robotic = 2
+	var/max_hot_temperature = 4000
+	var/max_cold_temperature = -1
+	process()
+		..()
+		var/bt = owner.bodytemperature
+		if(bt > max_hot_temperature || bt < max_cold_temperature)
+			take_damage(0.1)
 /datum/organ/internal/appendix
 	name = "appendix"
 	parent_organ = "groin"
