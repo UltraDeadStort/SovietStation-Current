@@ -667,7 +667,7 @@
 				pl_effects()
 				break
 
-		if(!istype(get_turf(src), /turf/space)) //space is not meant to change your body temperature.
+		if(!istype(get_turf(src), /turf/space) && pressure > 0) //space is not meant to change your body temperature.
 			var/loc_temp = T0C
 			if(istype(loc, /obj/mecha))
 				var/obj/mecha/M = loc
@@ -700,7 +700,10 @@
 			if (temp_adj < BODYTEMP_COOLING_MAX) temp_adj = BODYTEMP_COOLING_MAX
 			//world << "Environment: [loc_temp], [src]: [bodytemperature], Adjusting: [temp_adj]"
 			bodytemperature += temp_adj
-
+		else
+			if(!(stat | DEAD | IS_SYNTHETIC))
+				bodytemperature += 5
+				if (bodytemperature > BODYTEMP_HEATING_MAX) bodytemperature = BODYTEMP_HEATING_MAX
 		// +/- 50 degrees from 310.15K is the 'safe' zone, where no damage is dealt.
 		if(bodytemperature > species.heat_level_1)
 			//Body temperature is too hot.
@@ -723,13 +726,13 @@
 			if(!istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
 				switch(bodytemperature)
 					if(species.cold_level_2 to species.cold_level_1)
-						take_overall_damage(burn=COLD_DAMAGE_LEVEL_1, used_weapon = "High Body Temperature")
+						take_overall_damage(burn=COLD_DAMAGE_LEVEL_1, used_weapon = "Low Body Temperature")
 						fire_alert = max(fire_alert, 1)
 					if(species.cold_level_3 to species.cold_level_2)
-						take_overall_damage(burn=COLD_DAMAGE_LEVEL_2, used_weapon = "High Body Temperature")
+						take_overall_damage(burn=COLD_DAMAGE_LEVEL_2, used_weapon = "Low Body Temperature")
 						fire_alert = max(fire_alert, 1)
 					if(-INFINITY to species.cold_level_3)
-						take_overall_damage(burn=COLD_DAMAGE_LEVEL_3, used_weapon = "High Body Temperature")
+						take_overall_damage(burn=COLD_DAMAGE_LEVEL_3, used_weapon = "Low Body Temperature")
 						fire_alert = max(fire_alert, 1)
 
 		// Account for massive pressure differences.  Done by Polymorph
@@ -778,7 +781,7 @@
 
 	proc/stabilize_body_temperature()
 		if (species.flags & IS_SYNTHETIC)
-			bodytemperature += species.synth_temp_gain		//just keep putting out heat.
+			bodytemperature += species.synth_temp_gain
 			return
 
 		var/body_temperature_difference = species.body_temperature - bodytemperature

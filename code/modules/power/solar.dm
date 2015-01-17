@@ -125,7 +125,6 @@ var/list/solars_list = list()
 
 /obj/machinery/power/solar/process()//TODO: remove/add this from machines to save on processing as needed ~Carn PRIORITY
 	if(stat & BROKEN)	return
-	if(!control)	return
 
 	if(adir != ndir)
 		adir = (360+adir+dd_range(-10,10,ndir-adir))%360
@@ -274,6 +273,7 @@ var/list/solars_list = list()
 	use_power = 1
 	idle_power_usage = 5
 	active_power_usage = 20
+	var/obj/machinery/power/tracker/tracker = 0
 	var/id = 0
 	var/cdir = 0
 	var/gen = 0
@@ -367,7 +367,6 @@ var/list/solars_list = list()
 /obj/machinery/power/solar_control/process()
 	lastgen = gen
 	gen = 0
-
 	if(stat & (NOPOWER | BROKEN))
 		return
 
@@ -379,9 +378,10 @@ var/list/solars_list = list()
 		cdir = (cdir+trackdir+360)%360
 		set_panels(cdir)
 		update_icon()
-
+	if(track==2)
+		cdir = tracker.sun_angle
+		tracker_update(cdir)
 	src.updateDialog()
-
 
 // called by solar tracker when sun position changes
 /obj/machinery/power/solar_control/proc/tracker_update(var/angle)
@@ -467,6 +467,7 @@ var/list/solars_list = list()
 			for(var/obj/machinery/power/tracker/T in get_solars_powernet())
 				if(powernet.nodes[T])
 					cdir = T.sun_angle
+					tracker = T
 					break
 
 	if(href_list["trackdir"])

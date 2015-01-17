@@ -533,10 +533,14 @@
 
 	blood_color = "#1F181F"
 	flesh_color = "#575757"
+	inherent_verbs = list(
+		/mob/living/carbon/human/proc/cooler_off,
+		)
 
 	has_organ = list(
 		"heart" =    /datum/organ/internal/heart,
 		"brain" =    /datum/organ/internal/brain,
+		"cooler" = /datum/organ/internal/cooler,
 		)
 
 // Called when using the shredding behavior.

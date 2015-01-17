@@ -107,10 +107,10 @@
 				charging = 0
 	outputting = 0
 	if(online)		// if outputting
-		lastout = min( charge/SMESRATE, output)		//limit output to that stored
-		charge -= lastout*SMESRATE		// reduce the storage (may be recovered in /restore() if excessive)
 		if(charge > output)
 			outputting = 2
+			lastout = min( charge/SMESRATE, output)		//limit output to that stored
+			charge -= lastout*SMESRATE		// reduce the storage (may be recovered in /restore() if excessive)
 			add_avail(lastout)				// add output to powernet (smes side)
 		else
 			outputting = 1

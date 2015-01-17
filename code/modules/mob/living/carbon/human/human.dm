@@ -56,7 +56,11 @@
 		var/eta_status = emergency_shuttle.get_status_panel_eta()
 		if(eta_status)
 			stat(null, eta_status)
-
+	var/datum/organ/internal/cooler/C = internal_organs_by_name["cooler"]
+	if(C)
+		stat("Charge", "[src.nutrition / 4]%")
+		stat("Cooler", C.enabled ? "enable":"disable")
+		stat("Temperature", src.bodytemperature)
 	if (client.statpanel == "Status")
 
 		if (internal)
@@ -77,7 +81,6 @@
 
 		if (istype(wear_suit, /obj/item/clothing/suit/space/space_ninja)&&wear_suit:s_initialized)
 			stat("Energy Charge", round(wear_suit:cell:charge/100))
-
 
 /mob/living/carbon/human/ex_act(severity)
 	if(!blinded)

@@ -48,7 +48,18 @@
 	for(var/mob/O in viewers(src, null))
 		if ((O.client && !( O.blinded )))
 			O.show_message(text("\red <B>[] [failed ? "tried to tackle" : "has tackled"] down []!</B>", src, T), 1)
-
+/mob/living/carbon/human/proc/cooler_off()
+	set category = "System Control"
+	set name = "Toggle Cooler"
+	set desc = "Enable or disable cooler"
+	for(var/datum/organ/internal/cooler/C in src.internal_organs)
+		if(C)
+			if(C.enabled)
+				src << "You disable cooler"
+				C.enabled = 0
+			else
+				src << "You enable cooler"
+				C.enabled = 1
 /mob/living/carbon/human/proc/leap()
 	set category = "Abilities"
 	set name = "Leap"
