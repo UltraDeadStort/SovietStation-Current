@@ -702,11 +702,8 @@
 			bodytemperature += temp_adj
 		else
 			if(!(stat | DEAD | IS_SYNTHETIC))
-				bodytemperature += 1
+				bodytemperature += 5
 				if (bodytemperature > BODYTEMP_HEATING_MAX) bodytemperature = BODYTEMP_HEATING_MAX
-			else
-				bodytemperature -= 1
-				if (bodytemperature < BODYTEMP_COOLING_MAX) bodytemperature = BODYTEMP_COOLING_MAX
 		// +/- 50 degrees from 310.15K is the 'safe' zone, where no damage is dealt.
 		if(bodytemperature > species.heat_level_1)
 			//Body temperature is too hot.
@@ -784,14 +781,7 @@
 
 	proc/stabilize_body_temperature()
 		if (species.flags & IS_SYNTHETIC)
-			var/datum/organ/internal/cooler/cooler = 0
-			for(var/datum/organ/internal/cooler/C in internal_organs)
-				cooler = C
-			if(cooler)
-				if(cooler.is_broken())
-					bodytemperature += species.synth_temp_gain		//just keep putting out heat
-				else if(cooler.is_bruised())
-					bodytemperature += species.synth_temp_gain/2
+			bodytemperature += species.synth_temp_gain
 			return
 
 		var/body_temperature_difference = species.body_temperature - bodytemperature

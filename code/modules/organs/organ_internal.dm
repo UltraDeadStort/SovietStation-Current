@@ -266,13 +266,38 @@
 	parent_organ = "chest"
 	removed_type = /obj/item/organ/appendix
 	robotic = 2
-	var/max_hot_temperature = 4000
+	var/max_hot_temperature = 2000
 	var/max_cold_temperature = -1
+	var/temp_cold = 7.5
+	var/target_temp = 313
+	var/enabled = 0
 	process()
 		..()
+		if(owner.nutrition < 5) return //Нет охлаждения при низком заряде
+		if(!enabled)
+			if(owner.bodytemperature > owner.species.heat_level_1)
+				enabled = 1
+				owner << "Cooler enabled"
+			return
 		var/bt = owner.bodytemperature
 		if(bt > max_hot_temperature || bt < max_cold_temperature)
 			take_damage(0.1)
+		if(!is_broken())
+			if(!is_bruised())
+				if(bt < target_temp)
+					return
+				else if(bt > owner.species.heat_level_1)
+					bt -= temp_cold*2
+					owner.nutrition -= 1
+				else
+					owner.nutrition -= 0.1
+					if((bt - temp_cold) < target_temp)
+						bt -= (bt - target_temp)
+					else
+						bt -= temp_cold
+			else
+				bt -= temp_cold/2
+		owner.bodytemperature = bt
 /datum/organ/internal/appendix
 	name = "appendix"
 	parent_organ = "groin"
